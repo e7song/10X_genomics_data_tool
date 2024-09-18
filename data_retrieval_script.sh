@@ -23,11 +23,9 @@ fi
 
 if [ -d "DIRECTORY" ]; then
     echo "Downloading to $DIRECTORY"
-    DELETE_DIR_ON_ERR=1 # don't delete the users pre-created directory
 else
     echo "Creating $DIRECTORY"
     mkdir -p "$DIRECTORY"
-    DELETE_DIR_ON_ERR=0 # delete the directory
 fi
 
 wget $URL
@@ -39,9 +37,12 @@ if [ $? -eq 0 ]; then # checking the success of wget
 else
     echo "Something went wrong with the download."
     echo "Exited at: "$(date)
-    if [ DELETE_DIR_ON_ERR -eq 0 ]; then
-        rm -rf "$DIRECTORY" # dangerous? might delete all the data... maybe query user decision?
+    if [ "$(ls -A "$DIRECTORY")" ]; then
+        echo "Directory is not empty; check contents before removing."
+    else
+        echo "Directory is empty. Removing $DIRECTORY"
         rmdir "$DIRECTORY"
+fi
     exit 1
 fi
 
