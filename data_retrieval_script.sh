@@ -1,11 +1,26 @@
 #!/bin/bash
+
+# exit at any error
+set -e 
+
+# get the URL
 echo "Insert URL: "
 read URL
 
+# get the directory
 echo "Insert Directory Location: "
 read DIRECTORY
 
+# start the downloading
 echo "Starting Script: "`date`
+echo "Downloading from $URL. Are you in the correct directory? [y/n]"
+read CONTINUE_DOWNLOAD
+
+if [$CONTINUE_DOWNLOAD != 'y']; then
+    
+fi
+
+
 
 echo "Testing $URL and $DIRECTORY"
 
