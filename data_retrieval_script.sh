@@ -48,7 +48,10 @@ fi
 
 echo "Starting unzip at $(date)"
 
-unzip "$DIRECTORY/*.zip"
+zip_location="$DIRECTORY"/*.zip
+
+unzip -d "$DIRECTORY" $zip_location
+
 
 if [ $? -eq 0 ]; then # checking the success of wget
     echo "Unzip successfully finished at: "$(date)
