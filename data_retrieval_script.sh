@@ -71,6 +71,8 @@ fi
 echo "Testing $URL and $DIRECTORY"
 echo $(ls -A "$DIRECTORY")
 
+# new note 9/25/24: maybe echo all of the information into a logs file for clarity
+
 # todo:
 # py get_data.py $URL $DIRECTORY
 #
