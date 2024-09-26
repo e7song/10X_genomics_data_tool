@@ -11,21 +11,33 @@ read URL
 echo "Insert Directory Location: "
 read DIRECTORY
 
+# creating log file
+log_file="logs_$(date "+%m_%d_%y").txt"
+touch $log_file
+
 # start the downloading
-echo "Starting Script: "$(date)
+curr_date=$(date)
+# echo "Starting Script: $curr_date"
+echo "Starting Script: $curr_date" >> "$log_file"
+
+echo -e "\n=====\n"
+
 echo "Downloading from $URL. Are you in the correct directory? [y/n]"
 read CONTINUE_DOWNLOAD
 
 if [ "$CONTINUE_DOWNLOAD" != 'y' ]; then
     echo "Early Exit"
+    rm $log_file
     exit 0
 fi
 
-if [ -d "DIRECTORY" ]; then
-    echo "Downloading to $DIRECTORY"
+if [ -d "DIRECTORY" ]; then # bad code here <<
+    echo -e "\n=====\n"
+    echo "Downloading to $DIRECTORY" >> "$log_file"
 else
-    echo "Creating $DIRECTORY"
-    mkdir -p "$DIRECTORY"
+    echo -e "\n=====\n"
+    echo "Creating $DIRECTORY" >> "$log_file"
+    mkdir -p "$DIRECTORY" # -p flag makes the first if statement redundant
 fi
 
 wget -P "$DIRECTORY" "$URL"
@@ -33,10 +45,11 @@ wget -P "$DIRECTORY" "$URL"
 # additional comments: maybe filter for the size of the directory? need to look more into this
 
 if [ $? -eq 0 ]; then # checking the success of wget
-    echo "Download successfully finished at: "$(date)
+    echo "Download successfully finished at: "$(date) >> $log_file
 else
     echo "Something went wrong with the download."
-    echo "Exited at: "$(date)
+    echo "Exited at: "$(date) 
+    rm "$log_file"
     if [ "$(ls -A "$DIRECTORY")" ]; then
         echo "Directory is not empty; check contents before removing."
     else
@@ -46,18 +59,21 @@ else
     exit 1
 fi
 
-echo "Starting unzip at $(date)"
+echo -e "\n=====\n"
+
+echo -e "Starting unzip at $(date)" >> "$log_file"
 
 zip_location="$DIRECTORY"/*.zip
 
-unzip -d "$DIRECTORY" $zip_location
+unzip -d "$DIRECTORY" "$zip_location"
 
 
-if [ $? -eq 0 ]; then # checking the success of wget
-    echo "Unzip successfully finished at: "$(date)
+if [ $? -eq 0 ]; then # checking the success of unzip
+    echo "Unzip successfully finished at: "$(date) >> "$log_file"
 else
     echo "Something went wrong with the unzip."
     echo "Exited at: "$(date)
+    rm "$log_file"
     if [ "$(ls -A "$DIRECTORY")" ]; then
         echo "Directory is not empty; check contents before removing."
     else
@@ -67,6 +83,8 @@ else
     exit 1
 fi
 
+echo "PAUSED FOR TESTING"
+read $end_test
 
 echo "Testing $URL and $DIRECTORY"
 echo $(ls -A "$DIRECTORY")
