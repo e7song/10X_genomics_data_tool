@@ -28,7 +28,7 @@ else
     mkdir -p "$DIRECTORY"
 fi
 
-wget $URL
+wget -P "$DIRECTORY" "$URL"
 
 # additional comments: maybe filter for the size of the directory? need to look more into this
 
@@ -42,11 +42,31 @@ else
     else
         echo "Directory is empty. Removing $DIRECTORY"
         rmdir "$DIRECTORY"
-fi
+    fi
     exit 1
 fi
 
+echo "Starting unzip at $(date)"
+
+unzip "$DIRECTORY/*.zip"
+
+if [ $? -eq 0 ]; then # checking the success of wget
+    echo "Unzip successfully finished at: "$(date)
+else
+    echo "Something went wrong with the unzip."
+    echo "Exited at: "$(date)
+    if [ "$(ls -A "$DIRECTORY")" ]; then
+        echo "Directory is not empty; check contents before removing."
+    else
+        echo "Directory is empty. Removing $DIRECTORY"
+        rmdir "$DIRECTORY"
+    fi
+    exit 1
+fi
+
+
 echo "Testing $URL and $DIRECTORY"
+echo $(ls -A "$DIRECTORY")
 
 # todo:
 # py get_data.py $URL $DIRECTORY
@@ -69,3 +89,7 @@ echo "Testing $URL and $DIRECTORY"
 #   -- what percentage of the cells were converted
 #   	-- total number of cells
 #
+
+
+# 09/17
+# want to test with a zip file
