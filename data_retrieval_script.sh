@@ -59,7 +59,7 @@ else
     exit 1
 fi
 
-echo -e "\n=====\n"
+echo -e "\n=====\n" >> "$log_file"
 
 echo -e "Starting unzip at $(date)" >> "$log_file"
 
