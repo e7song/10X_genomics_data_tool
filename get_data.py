@@ -12,7 +12,6 @@ from scipy.stats import zscore
 from scipy.ndimage import rotate
 from skimage.filters import gaussian
 from skimage.transform import resize, radon, rotate
-import sys
 
 def log_progress(message, log_path): # credits, learned/implemented this from an IBM course
     timestamp_format = '%Y-%h-%d-%H:%M:%S' # Year-Monthname-Day-Hour-Minute-Second 
@@ -68,21 +67,32 @@ if __name__ == "__main__":
 
     # unzip to save directory, if save directory does not exist prompt user to save to the directory specified?
 
-    boundary_path = '/home/salt/ben/RNAforest2/train_data_gen/10x_hp/cell_boundaries.csv.gz'
+    boundary_path = sys.argv[1]
 
-    cell_boundaries = pd.read_csv('/home/salt/ben/RNAforest2/train_data_gen/10x_hp/cell_boundaries.csv.gz')
+    cell_boundaries = pd.read_csv(boundary_path)
 
-    save_path = '/home/salt/ben/RNAforest2/train_data_gen/cell_collection/10X_HP'
+    save_path = sys.argv[2]
 
-    pt_name_dct, num_point_dct = data_eda(cell_boundaries)
+    identifier = sys.argv[3]
+
+    log_path = sys.arv[4]
+
+    pt_name_dct, num_point_dct = data_eda(cell_boundaries, log_path)
 
     saved_files = len(os.listdir(save_path))
 
-    process(cell_boundaries, pt_name_dct, identifier)
+    error_dct = process(cell_boundaries, pt_name_dct, identifier, log_path)
 
     print(f'Percentage of Errors:')
     for key in error_dct.keys():
         error_rate = len(error_dct[key]) / saved_files
         print(f'{key} Error: {error_rate * 100:2f}%')
 
-    pass
+    log_progress("Writing in cells that caused an error during processing", log_path)
+
+    error_file = f'{identifier}_errors.txt'
+
+    with open(error_file, 'w') as f:
+        f.write(str(error_dct) + '\n')
+    
+    f.close()

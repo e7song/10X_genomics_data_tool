@@ -93,7 +93,7 @@ boundary_path="$DIRECTORY"/cell_boundaries.csv.gz
 
 save_path="$(pwd)"/10X_"$identifer"
 
-py get_data.py "$boundary_path" "$save_path"
+py get_data.py "$boundary_path" "$save_path" "$identifier" "$log_file"
 
 # echo "PAUSED FOR TESTING"
 # read $end_test
