@@ -1,41 +1,53 @@
+# import numpy as np
+# import pandas as pd
+# import matplotlib.pyplot as plt
+# from tqdm import tqdm
+# import random
+# import shutil
+# from scipy.ndimage import distance_transform_edt
+# import torch
+# import torch.nn.functional as F
+# from scipy.ndimage import binary_erosion
+# import tifffile
+# from scipy import stats as st
+# import skimage
+# from skimage import io
+# from scipy.stats import zscore
+# from scipy.ndimage import rotate
+# from skimage.filters import gaussian
+# from skimage.transform import resize, radon, rotate
+# from skimage.feature import canny
+# #from datagen_utils import *
+# import matplotlib.pyplot as plt
+# import os
+# import random
+# import shutil
+# from scipy.ndimage import zoom
+# import sys
+# import torch
+# import torch.nn as nn
+# import torch.optim as optim
+# from torchvision import datasets, transforms
+# import matplotlib.pyplot as plt
+# from torch.utils.data import Dataset, DataLoader
+# import neptune
+# from sklearn.cluster import KMeans
+# import umap
+# from sklearn.manifold import TSNE
+# import shapely
+# from sklearn.decomposition import PCA
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from tqdm import tqdm
-import random
-import shutil
-from scipy.ndimage import distance_transform_edt
-import torch
-import torch.nn.functional as F
-from scipy.ndimage import binary_erosion
 import tifffile
-from scipy import stats as st
 import skimage
 from skimage import io
 from scipy.stats import zscore
 from scipy.ndimage import rotate
 from skimage.filters import gaussian
 from skimage.transform import resize, radon, rotate
-from skimage.feature import canny
-#from datagen_utils import *
-import matplotlib.pyplot as plt
-import os
-import random
-import shutil
-from scipy.ndimage import zoom
 import sys
-import torch
-import torch.nn as nn
-import torch.optim as optim
-from torchvision import datasets, transforms
-import matplotlib.pyplot as plt
-from torch.utils.data import Dataset, DataLoader
-import neptune
-from sklearn.cluster import KMeans
-import umap
-from sklearn.manifold import TSNE
-import shapely
-from sklearn.decomposition import PCA
 
 def find_rotation_angle(cell_image):
     # Convert the image to binary
@@ -133,3 +145,14 @@ def preprocess(cell_id, cell_boundaries, resolution = 100, bounds = 128):
             return "too small, resulted in multiple cells"
         return "multiple cells"
     return background
+
+def get_cell(cell_id, cell_boundaries):
+    '''
+    Function for quickly getting the Shapely cell for a given cell id.
+    '''
+    coords = cell_boundaries[cell_boundaries['cell_id'].eq(cell_id)].to_numpy()[:, 1:3]
+    single_coords = []
+    for x, y in coords:
+        single_coords.append((x, y))
+    cell = shapely.Polygon(single_coords)
+    return cell

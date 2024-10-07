@@ -63,6 +63,8 @@ echo -e "\n=====\n" >> "$log_file"
 
 echo -e "Starting unzip at $(date)" >> "$log_file"
 
+echo -e "\n=====\n" >> "$log_file"
+
 zip_location="$DIRECTORY"/*.zip
 
 unzip -d "$DIRECTORY" "$zip_location"
@@ -70,6 +72,7 @@ unzip -d "$DIRECTORY" "$zip_location"
 
 if [ $? -eq 0 ]; then # checking the success of unzip
     echo "Unzip successfully finished at: "$(date) >> "$log_file"
+    echo -e "\n=====\n" >> "$log_file"
 else
     echo "Something went wrong with the unzip."
     echo "Exited at: "$(date)
@@ -83,11 +86,20 @@ else
     exit 1
 fi
 
-echo "PAUSED FOR TESTING"
-read $end_test
+echo "Enter a unique identifer for this dataset (ex. HP, PRO)"
+read $identifier
 
-echo "Testing $URL and $DIRECTORY"
-echo $(ls -A "$DIRECTORY")
+boundary_path="$DIRECTORY"/cell_boundaries.csv.gz
+
+save_path="$(pwd)"/10X_"$identifer"
+
+py get_data.py "$boundary_path" "$save_path"
+
+# echo "PAUSED FOR TESTING"
+# read $end_test
+
+# echo "Testing $URL and $DIRECTORY"
+# echo $(ls -A "$DIRECTORY")
 
 # new note 9/25/24: maybe echo all of the information into a logs file for clarity
 
